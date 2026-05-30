@@ -1,0 +1,74 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ELibraryStatistics.ViewModels"
+             xmlns:models="using:ELibraryStatistics.Models"
+             mc:Ignorable="d" d:DesignWidth="860" d:DesignHeight="560"
+             x:Class="ELibraryStatistics.Views.LoadStatisticsView"
+             x:DataType="vm:LoadStatisticsViewModel"
+             x:Name="PageRoot">
+
+  <Grid Margin="12" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*,2*">
+
+    <!-- Action buttons -->
+    <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal"
+                Spacing="12" Margin="0,0,0,12">
+      <Button Content="Загрузить файл" MinWidth="160"
+              Command="{Binding LoadFileCommand}" IsEnabled="{Binding !IsBusy}" />
+      <Button Content="Сохранить файл" MinWidth="160"
+              Command="{Binding SaveStatisticsCommand}" IsEnabled="{Binding !IsBusy}" />
+      <TextBlock VerticalAlignment="Center" Foreground="#555"
+                 Text="{Binding StatusMessage}" TextWrapping="Wrap" />
+    </StackPanel>
+
+    <!-- Aggregate counters -->
+    <StackPanel Grid.Row="1" Grid.Column="0" Spacing="10" Margin="0,8,12,0">
+      <TextBlock FontSize="14">
+        <Run Text="Количество файлов в БД - " />
+        <Run Text="{Binding FileCount}" FontWeight="Bold" />
+      </TextBlock>
+      <TextBlock FontSize="14">
+        <Run Text="Количество авторов в БД - " />
+        <Run Text="{Binding AuthorCount}" FontWeight="Bold" />
+      </TextBlock>
+      <TextBlock FontSize="14">
+        <Run Text="Количество статей в БД - " />
+        <Run Text="{Binding ArticleCount}" FontWeight="Bold" />
+      </TextBlock>
+    </StackPanel>
+
+    <!-- File upload history -->
+    <Border Grid.Row="1" Grid.Column="1" BorderBrush="#999" BorderThickness="1"
+            CornerRadius="4" Padding="10">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="История загрузки файлов"
+                   FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,10" />
+        <ListBox ItemsSource="{Binding History}">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="models:SourceFileRecord">
+              <Grid ColumnDefinitions="*,Auto,Auto" Margin="2">
+                <TextBlock Grid.Column="0" Text="{Binding DisplayName}"
+                           VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                <TextBlock Grid.Column="1" Margin="10,0"
+                           VerticalAlignment="Center" Foreground="#555"
+                           Text="{Binding LoadedAt, StringFormat='{}{0:yyyy-MM-dd}'}" />
+                <Button Grid.Column="2" Content="x" Width="28" Padding="0"
+                        ToolTip.Tip="Удалить данные файла"
+                        Command="{Binding #PageRoot.((vm:LoadStatisticsViewModel)DataContext).DeleteFileCommand}"
+                        CommandParameter="{Binding}" />
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+    </Border>
+
+    <!-- Footer -->
+    <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0,12,0,0"
+               Foreground="#777">
+      <Run Text="Текущая версия - " />
+      <Run Text="{Binding Version}" />
+    </TextBlock>
+  </Grid>
+</UserControl>
